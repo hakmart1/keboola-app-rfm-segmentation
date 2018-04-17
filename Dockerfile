@@ -1,5 +1,6 @@
-FROM php:7-cli
+FROM openjdk:8
 
 COPY . /code/
 WORKDIR /data/
-CMD ["php", "/code/main.php"]
+CMD ["java", "-jar", "/code/KeboolaRFMSegmentation.jar", "config.json"]
+
