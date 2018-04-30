@@ -171,12 +171,13 @@ public class KeboolaRFMSegmentation {
 
         List<RFMSegmentationInterpreter> interpreters = new ArrayList<RFMSegmentationInterpreter>();
 
-        if (columns.getAsJsonPrimitive("potential") == null && columns.getAsJsonPrimitive("potential").getAsString().equals("Yes")) {
+        if (config.getAsJsonPrimitive("potential") != null)
+            if (config.getAsJsonPrimitive("potential").getAsString().equals("Yes")) {
             if (outputs.get(1).getAsJsonObject().getAsJsonPrimitive("source") == null) {
                 System.err.println("Output file for business potential must be specified");
                 System.exit(1);
             }
-            interpreters.add(new FMShiftInterpreter(new FileCustomDataExporter("/data/out/tables/"+outputs.get(0).getAsJsonObject().getAsJsonPrimitive("source").getAsString())));
+            interpreters.add(new FMShiftInterpreter(new FileCustomDataExporter("/data/out/tables/"+outputs.get(1).getAsJsonObject().getAsJsonPrimitive("source").getAsString())));
         }
 
         System.out.println("Parameters parsed successfully.");
