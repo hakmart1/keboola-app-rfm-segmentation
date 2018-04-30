@@ -1,0 +1,71 @@
+package segmentation;
+
+import data.CsvRFMDataExporter;
+import data.CsvRFMDataProvider;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
+
+@RunWith(MockitoJUnitRunner.class)
+public class QuantilRFMSegmenterTest {
+    @Mock
+    public CsvRFMDataProvider csvRFMDataProvider;
+
+    @Mock
+    public CsvRFMDataExporter csvRFMDataExporter;
+
+    @Test
+    public void largeFirstSegment() throws Exception {
+        RFMSegmenter rfmSegmenter = new QuantilRFMSegmenter(csvRFMDataProvider, csvRFMDataExporter,3,3,3);
+
+        rfmSegmenter.resolveThresholds(getTestUsersGroup());
+        Assert.assertEquals(2, rfmSegmenter.frequencyThresholds.length);
+        Assert.assertArrayEquals(new Integer[] {1,1}, rfmSegmenter.frequencyThresholds);
+    }
+
+    @Test
+    public void sameValueForEveryUser() throws Exception {
+        RFMSegmenter rfmSegmenter = new QuantilRFMSegmenter(csvRFMDataProvider, csvRFMDataExporter,3,3,3);
+
+        rfmSegmenter.resolveThresholds(getTestUsersGroup());
+        Assert.assertEquals(2, rfmSegmenter.monetaryThresholds.length);
+        Assert.assertArrayEquals(new Double[] {1.0,1.0}, rfmSegmenter.monetaryThresholds);
+    }
+
+    @Test
+    public void oneSegmentOnly() throws Exception {
+        RFMSegmenter rfmSegmenter = new QuantilRFMSegmenter(csvRFMDataProvider, csvRFMDataExporter,1,1,1);
+
+        rfmSegmenter.resolveThresholds(getTestUsersGroup());
+        Assert.assertEquals(0, rfmSegmenter.monetaryThresholds.length);
+    }
+
+    @Test
+    public void fewerUsersThanBoundaries() throws Exception {
+        RFMSegmenter rfmSegmenter = new QuantilRFMSegmenter(csvRFMDataProvider, csvRFMDataExporter,3,3,3);
+
+        rfmSegmenter.resolveThresholds(Arrays.asList(new User("TestUserId1", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-10"), 2, 1.0)));
+        Assert.assertEquals(2, rfmSegmenter.monetaryThresholds.length);
+        Assert.assertArrayEquals(new Double[]{1.0, 1.0}, rfmSegmenter.monetaryThresholds);
+    }
+
+    private static List<User> getTestUsersGroup() throws Exception {
+        return Arrays.asList(
+                new User("TestUserId1", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-01"), 1, 1),
+                new User("TestUserId2", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-02"), 1, 1),
+                new User("TestUserId3", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-03"), 1, 1),
+                new User("TestUserId4", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-04"), 1, 1),
+                new User("TestUserId5", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-05"), 1, 1),
+                new User("TestUserId6", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-06"), 1, 1),
+                new User("TestUserId7", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-07"), 2, 1),
+                new User("TestUserId8", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-08"), 2, 1),
+                new User("TestUserId9", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-09"), 3, 1)
+        );
+    }
+}
