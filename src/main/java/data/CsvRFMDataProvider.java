@@ -35,7 +35,7 @@ public class CsvRFMDataProvider implements IRFMDataProvider {
         while ((line = br.readLine()) != null) {
             String[] data = line.replaceAll("\"", "").split(separator);
             String cluster = indexes.haveCluster() ? data[indexes.getClusterIndex()] : "";
-            Date date = new SimpleDateFormat(dateFormat).parse(data[indexes.getDateIndex()]);
+            long date = new SimpleDateFormat(dateFormat).parse(data[indexes.getDateIndex()]).getTime();
             double price = Double.parseDouble(data[indexes.getPriceIndex()]);
             String userId = data[indexes.getEntityIdIndex()];
 
@@ -45,7 +45,7 @@ public class CsvRFMDataProvider implements IRFMDataProvider {
             if (user != null) {
                 user.setFrequency(user.getFrequency() + 1);
                 user.setMonetary(user.getMonetary() + price);
-                user.setRecency(user.getRecency().compareTo(date) > 0 ? user.getRecency() : date);
+                user.setRecency(user.getRecency() > date ? user.getRecency() : date);
             }
         }
 

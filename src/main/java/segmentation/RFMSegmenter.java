@@ -8,7 +8,7 @@ import java.util.*;
 public abstract class RFMSegmenter implements IRFMSegmenter{
     private IRFMDataProvider dataProvider;
     private IRFMDataExporter dataExporter;
-    protected Date[] recencyThresholds;
+    protected Long[] recencyThresholds;
     protected Integer[] frequencyThresholds;
     protected Double[] monetaryThresholds;
 

@@ -17,7 +17,7 @@ public class GradualQuantilRFMSegmenter extends RFMSegmenter {
 
     @Override
     protected void resolveThresholds(List<User> users) {
-        recencyThresholds = new Date[recencyQuantilCount-1];
+        recencyThresholds = new Long[recencyQuantilCount-1];
         frequencyThresholds = new Integer[frequencyQuantilCount-1];
         monetaryThresholds = new Double[monetaryQuantilCount-1];
 
@@ -26,13 +26,13 @@ public class GradualQuantilRFMSegmenter extends RFMSegmenter {
         for (int i = 1; i <= this.recencyThresholds.length; i++){
             int index = (int)Math.max(0,((users.size() - taken) / ((double)recencyQuantilCount-i+1))-1+taken);
             recencyThresholds[i-1] = users.get(index).getRecency();
-            while (index < users.size() && users.get(index).getRecency().compareTo(recencyThresholds[i-1]) == 0){
+            while (index < users.size() && users.get(index).getRecency() == recencyThresholds[i-1]){
                 index++;
             }
             taken = index;
         }
 
-        Collections.sort(users, new User.FreqencyComparator());
+        Collections.sort(users, new User.FrequencyComparator());
         taken = 0;
         for (int i = 1; i <= frequencyThresholds.length; i++){
             int index = (int)Math.max(0,((users.size() - taken) / ((double)frequencyQuantilCount-i+1))-1+taken);

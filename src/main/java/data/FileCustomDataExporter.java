@@ -3,9 +3,6 @@ package data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-/**
- * Created by Martin on 26. 4. 2018.
- */
 public class FileCustomDataExporter implements ICustomDataExporter {
     private String filePath;
     private BufferedWriter bufferedWriter;

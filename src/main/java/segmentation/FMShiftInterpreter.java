@@ -3,7 +3,6 @@ package segmentation;
 import data.ICustomDataExporter;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 
 public class FMShiftInterpreter extends RFMSegmentationInterpreter {
@@ -12,11 +11,11 @@ public class FMShiftInterpreter extends RFMSegmentationInterpreter {
     }
 
     @Override
-    public void processSegmentation(Map<User, RFMResult> rfmResults, Date[] recencyThresholds, Integer[] frequencyThresholds, Double[] monetaryThresholds) throws Exception {
-        int freqencyMax = Collections.max(rfmResults.keySet(), new User.FreqencyComparator()).getFrequency();
+    public void processSegmentation(Map<User, RFMResult> rfmResults, Long[] recencyThresholds, Integer[] frequencyThresholds, Double[] monetaryThresholds) throws Exception {
+        int frequencyMax = Collections.max(rfmResults.keySet(), new User.FrequencyComparator()).getFrequency();
         double monetaryMax = Collections.max(rfmResults.keySet(), new User.MonetaryComparator()).getMonetary();
 
-        double pesimistic = 0, realistic = 0, optimistic = 0;
+        double pessimistic = 0, realistic = 0, optimistic = 0;
         for (Map.Entry<User, RFMResult> entry : rfmResults.entrySet()) {
             User user = entry.getKey();
             RFMResult result = entry.getValue();
@@ -24,7 +23,7 @@ public class FMShiftInterpreter extends RFMSegmentationInterpreter {
             double pM = 0, rM = 0, oM = 0;
             if (result.getFrequency() <= result.getMonetary() && result.getFrequency() <= frequencyThresholds.length) {
                 pF = frequencyThresholds[result.getFrequency() - 1] - user.getFrequency();
-                oF = (result.getFrequency() < frequencyThresholds.length ? frequencyThresholds[result.getFrequency()] : freqencyMax) - user.getFrequency();
+                oF = (result.getFrequency() < frequencyThresholds.length ? frequencyThresholds[result.getFrequency()] : frequencyMax) - user.getFrequency();
                 rF = (pF+oF) / 2;
             } else {
                 pF = oF = rF = user.getFrequency();
@@ -37,16 +36,16 @@ public class FMShiftInterpreter extends RFMSegmentationInterpreter {
             } else {
                 pM = oM = rM = user.getMonetary();
             }
-            pesimistic += pF*pM;
+            pessimistic += pF*pM;
             realistic += rF*rM;
             optimistic += oF*oM;
         }
 
-        dataExporter.addDataToOutputContainer(pesimistic+","+realistic+","+optimistic);
+        dataExporter.addDataToOutputContainer(pessimistic+","+realistic+","+optimistic);
     }
 
     @Override
-    public void processSegmentation(String cluster, Map<User, RFMResult> rfmResults, Date[] recencyThresholds, Integer[] frequencyThresholds, Double[] monetaryThresholds) throws Exception {
+    public void processSegmentation(String cluster, Map<User, RFMResult> rfmResults, Long[] recencyThresholds, Integer[] frequencyThresholds, Double[] monetaryThresholds) throws Exception {
         dataExporter.addDataToOutputContainer(cluster+",");
         processSegmentation(rfmResults, recencyThresholds, frequencyThresholds, monetaryThresholds);
     }

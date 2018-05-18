@@ -10,7 +10,6 @@ import segmentation.*;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class KeboolaRFMSegmentation {
@@ -37,13 +36,6 @@ public class KeboolaRFMSegmentation {
             System.exit(1);
         }
         String inputTable = config.getAsJsonObject("storage").getAsJsonObject("input").getAsJsonArray("tables").get(0).getAsJsonObject().getAsJsonPrimitive("destination").getAsString();
-
-        JsonArray outputs = config.getAsJsonObject("storage").getAsJsonObject("output").getAsJsonArray("tables");
-        if (outputs.get(0).getAsJsonObject().getAsJsonPrimitive("source") == null) {
-            System.err.println("Output file must be specified");
-            System.exit(1);
-        }
-        String outputBucket = outputs.get(0).getAsJsonObject().getAsJsonPrimitive("source").getAsString();
 
         config = config.getAsJsonObject("parameters");
 
@@ -95,7 +87,7 @@ public class KeboolaRFMSegmentation {
         Columns columnsHeaders = new Columns(isClustered ? cluster : "", entity, price, date);
 
         IRFMDataProvider dataProvider = new CsvRFMDataProvider("/data/in/tables/"+inputTable, separator, columnsHeaders, dateFormat, true);
-        IRFMDataExporter dataExporter = new CsvRFMDataExporter("/data/out/tables/"+outputBucket, separator, isClustered, dateFormat);
+        IRFMDataExporter dataExporter = new CsvRFMDataExporter("/data/out/tables/results.csv", separator, isClustered, dateFormat);
 
         if (method.equals("quantil") || method.equals("gradualQuantil")) {
             if (config.getAsJsonPrimitive("recencySegmentsCount") == null) {
@@ -133,10 +125,10 @@ public class KeboolaRFMSegmentation {
                 System.err.println("In case of Custom method recency thresholds array must be specified");
                 System.exit(1);
             }
-            Date[] recencyThresholds = new Date[recencyJsonArray.size()];
+            Long[] recencyThresholds = new Long[recencyJsonArray.size()];
             try {
                 for (int i = 0; i < recencyJsonArray.size(); i++) {
-                    recencyThresholds[i] = new SimpleDateFormat(dateFormat).parse(recencyJsonArray.get(i).getAsString());
+                    recencyThresholds[i] = new SimpleDateFormat(dateFormat).parse(recencyJsonArray.get(i).getAsString()).getTime();
                 }
             } catch (Exception ex) {
                 System.err.println("The date has wrong format.\n" + ex.getMessage());
@@ -173,11 +165,7 @@ public class KeboolaRFMSegmentation {
 
         if (config.getAsJsonPrimitive("potential") != null)
             if (config.getAsJsonPrimitive("potential").getAsString().equals("Yes")) {
-            if (outputs.get(1).getAsJsonObject().getAsJsonPrimitive("source") == null) {
-                System.err.println("Output file for business potential must be specified");
-                System.exit(1);
-            }
-            interpreters.add(new FMShiftInterpreter(new FileCustomDataExporter("/data/out/tables/"+outputs.get(1).getAsJsonObject().getAsJsonPrimitive("source").getAsString())));
+            interpreters.add(new FMShiftInterpreter(new FileCustomDataExporter("/data/out/tables/business_potential.csv")));
         }
 
         System.out.println("Parameters parsed successfully.");

@@ -1,15 +1,14 @@
 package segmentation;
 
 import java.util.Comparator;
-import java.util.Date;
 
 public class User {
     private String userId;
-    private Date recency;
+    private long recency;
     private int frequency;
     private double monetary;
 
-    public User(String userId, Date recency, int frequency, double monetary) {
+    public User(String userId, long recency, int frequency, double monetary) {
         this.userId = userId;
         this.recency = recency;
         this.frequency = frequency;
@@ -20,11 +19,11 @@ public class User {
         return this.userId;
     }
 
-    public Date getRecency() {
+    public long getRecency() {
         return this.recency;
     }
 
-    public void setRecency(Date recency) {
+    public void setRecency(long recency) {
         this.recency = recency;
     }
 
@@ -47,11 +46,11 @@ public class User {
     static class RecencyComparator implements Comparator<User> {
         @Override
         public int compare(User firstUser, User secondUser) {
-            return firstUser.getRecency().compareTo(secondUser.getRecency());
+            return Long.compare(firstUser.getRecency(), secondUser.getRecency());
         }
     }
 
-    static class FreqencyComparator implements Comparator<User> {
+    static class FrequencyComparator implements Comparator<User> {
         @Override
         public int compare(User firstUser, User secondUser) {
             return Integer.compare(firstUser.getFrequency(), secondUser.getFrequency());

@@ -50,22 +50,22 @@ public class QuantilRFMSegmenterTest {
     public void fewerUsersThanBoundaries() throws Exception {
         RFMSegmenter rfmSegmenter = new QuantilRFMSegmenter(csvRFMDataProvider, csvRFMDataExporter,3,3,3);
 
-        rfmSegmenter.resolveThresholds(Arrays.asList(new User("TestUserId1", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-10"), 2, 1.0)));
+        rfmSegmenter.resolveThresholds(Arrays.asList(new User("TestUserId1", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-10").getTime(), 2, 1.0)));
         Assert.assertEquals(2, rfmSegmenter.monetaryThresholds.length);
         Assert.assertArrayEquals(new Double[]{1.0, 1.0}, rfmSegmenter.monetaryThresholds);
     }
 
     private static List<User> getTestUsersGroup() throws Exception {
         return Arrays.asList(
-                new User("TestUserId1", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-01"), 1, 1),
-                new User("TestUserId2", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-02"), 1, 1),
-                new User("TestUserId3", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-03"), 1, 1),
-                new User("TestUserId4", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-04"), 1, 1),
-                new User("TestUserId5", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-05"), 1, 1),
-                new User("TestUserId6", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-06"), 1, 1),
-                new User("TestUserId7", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-07"), 2, 1),
-                new User("TestUserId8", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-08"), 2, 1),
-                new User("TestUserId9", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-09"), 3, 1)
+                new User("TestUserId1", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-01").getTime(), 1, 1),
+                new User("TestUserId2", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-02").getTime(), 1, 1),
+                new User("TestUserId3", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-03").getTime(), 1, 1),
+                new User("TestUserId4", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-04").getTime(), 1, 1),
+                new User("TestUserId5", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-05").getTime(), 1, 1),
+                new User("TestUserId6", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-06").getTime(), 1, 1),
+                new User("TestUserId7", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-07").getTime(), 2, 1),
+                new User("TestUserId8", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-08").getTime(), 2, 1),
+                new User("TestUserId9", new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-09").getTime(), 3, 1)
         );
     }
 }
